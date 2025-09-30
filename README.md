@@ -1,0 +1,1 @@
+# world-currency-conversions-pkr
