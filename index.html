@@ -1,0 +1,827 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Currency Conversion in PKR</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #b21f1f;
+            --accent: #fdbb2d;
+            --light: #f8f9fa;
+            --dark: #333;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .search-container i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .converter-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+        
+        .converter-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            color: var(--secondary);
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        label {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        select, input {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(26, 42, 108, 0.2);
+        }
+        
+        .swap-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .swap-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .swap-btn:hover {
+            background: var(--secondary);
+            transform: rotate(180deg);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 25px;
+            background: var(--light);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .conversion-rate {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+        
+        .all-currencies {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .currency-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .currency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+        
+        .currency-flag {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .currency-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .currency-code {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .currency-rate {
+            color: var(--secondary);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .continent-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .continent-btn {
+            padding: 8px 16px;
+            background: var(--light);
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .continent-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .history-section {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .chart-placeholder {
+            text-align: center;
+            color: #666;
+        }
+        
+        .chart-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px 0;
+            width: 100%;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .currency-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>World Currency Conversion</h1>
+            <p class="subtitle">Convert all world currencies to Pakistani Rupees (PKR) with live exchange rates</p>
+            <div class="search-container">
+                <input type="text" id="search-currency" placeholder="Search for a currency...">
+                <i class="fas fa-search"></i>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="converter-card">
+                <h2 class="card-title"><i class="fas fa-exchange-alt"></i> Currency Converter</h2>
+                
+                <div class="input-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" placeholder="Enter amount" value="1" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="from-currency">From Currency</label>
+                    <select id="from-currency">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="swap-container">
+                    <button class="swap-btn" id="swap-btn">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                
+                <div class="input-group">
+                    <label for="to-currency">To Currency</label>
+                    <select id="to-currency" disabled>
+                        <option value="PKR">PKR - Pakistani Rupee</option>
+                    </select>
+                </div>
+                
+                <div class="result">
+                    <div id="conversion-result">1 USD = 278.45 PKR</div>
+                    <div class="conversion-rate" id="conversion-rate">Exchange rate: 1 USD = 278.45 PKR</div>
+                </div>
+            </div>
+            
+            <div class="converter-card">
+                <h2 class="card-title"><i class="fas fa-info-circle"></i> About PKR</h2>
+                <p>The Pakistani Rupee (PKR) is the official currency of Pakistan. It is issued by the State Bank of Pakistan.</p>
+                
+                <div style="margin-top: 20px;">
+                    <h3 style="color: var(--primary); margin-bottom: 10px;">Key Features</h3>
+                    <ul style="list-style-type: none;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-check" style="color: green; margin-right: 10px;"></i>
+                            <span style="font-weight: 600;">Widely Accepted:</span> Used by over 220 million people
+                        </li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-check" style="color: green; margin-right: 10px;"></i>
+                            <span style="font-weight: 600;">Stable:</span> Managed by State Bank of Pakistan
+                        </li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-check" style="color: green; margin-right: 10px;"></i>
+                            <span style="font-weight: 600;">Convertible:</span> Easily exchanged worldwide
+                        </li>
+                        <li style="padding: 8px 0;">
+                            <i class="fas fa-check" style="color: green; margin-right: 10px;"></i>
+                            <span style="font-weight: 600;">Historical:</span> In use since 1948
+                        </li>
+                    </ul>
+                </div>
+                
+                <div style="margin-top: 25px; background: var(--light); padding: 15px; border-radius: 8px;">
+                    <h3 style="color: var(--primary); margin-bottom: 10px;">Exchange Rate Alert</h3>
+                    <p>Get notified when your desired exchange rate is reached.</p>
+                    <div style="display: flex; margin-top: 10px;">
+                        <input type="email" placeholder="Your email" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px 0 0 5px;">
+                        <button style="background: var(--primary); color: white; border: none; padding: 0 15px; border-radius: 0 5px 5px 0; cursor: pointer;">Set Alert</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="all-currencies">
+            <h2 class="section-title"><i class="fas fa-globe-americas"></i> All World Currencies</h2>
+            
+            <div class="continent-filter">
+                <button class="continent-btn active" data-continent="all">All</button>
+                <button class="continent-btn" data-continent="asia">Asia</button>
+                <button class="continent-btn" data-continent="europe">Europe</button>
+                <button class="continent-btn" data-continent="africa">Africa</button>
+                <button class="continent-btn" data-continent="north-america">North America</button>
+                <button class="continent-btn" data-continent="south-america">South America</button>
+                <button class="continent-btn" data-continent="oceania">Oceania</button>
+            </div>
+            
+            <div class="currency-grid" id="all-currencies">
+                <!-- All currencies will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <h2 class="section-title"><i class="fas fa-chart-line"></i> Exchange Rate History (Last 30 Days)</h2>
+            <div class="chart-container">
+                <div class="chart-placeholder">
+                    <i class="fas fa-chart-bar"></i>
+                    <p>Exchange rate chart would be displayed here</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">In a real application, this would show historical data for selected currency</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div>World Currency Conversion in PKR &copy; 2023</div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Comprehensive list of world currencies with flags and continents
+        const worldCurrencies = [
+            // Asia
+            { code: 'USD', name: 'US Dollar', flag: '🇺🇸', continent: 'north-america' },
+            { code: 'EUR', name: 'Euro', flag: '🇪🇺', continent: 'europe' },
+            { code: 'GBP', name: 'British Pound', flag: '🇬🇧', continent: 'europe' },
+            { code: 'AED', name: 'UAE Dirham', flag: '🇦🇪', continent: 'asia' },
+            { code: 'SAR', name: 'Saudi Riyal', flag: '🇸🇦', continent: 'asia' },
+            { code: 'CNY', name: 'Chinese Yuan', flag: '🇨🇳', continent: 'asia' },
+            { code: 'JPY', name: 'Japanese Yen', flag: '🇯🇵', continent: 'asia' },
+            { code: 'INR', name: 'Indian Rupee', flag: '🇮🇳', continent: 'asia' },
+            { code: 'KRW', name: 'South Korean Won', flag: '🇰🇷', continent: 'asia' },
+            { code: 'SGD', name: 'Singapore Dollar', flag: '🇸🇬', continent: 'asia' },
+            { code: 'MYR', name: 'Malaysian Ringgit', flag: '🇲🇾', continent: 'asia' },
+            { code: 'THB', name: 'Thai Baht', flag: '🇹🇭', continent: 'asia' },
+            { code: 'IDR', name: 'Indonesian Rupiah', flag: '🇮🇩', continent: 'asia' },
+            { code: 'PHP', name: 'Philippine Peso', flag: '🇵🇭', continent: 'asia' },
+            { code: 'VND', name: 'Vietnamese Dong', flag: '🇻🇳', continent: 'asia' },
+            { code: 'BDT', name: 'Bangladeshi Taka', flag: '🇧🇩', continent: 'asia' },
+            { code: 'LKR', name: 'Sri Lankan Rupee', flag: '🇱🇰', continent: 'asia' },
+            { code: 'NPR', name: 'Nepalese Rupee', flag: '🇳🇵', continent: 'asia' },
+            { code: 'AFN', name: 'Afghan Afghani', flag: '🇦🇫', continent: 'asia' },
+            { code: 'IRR', name: 'Iranian Rial', flag: '🇮🇷', continent: 'asia' },
+            { code: 'IQD', name: 'Iraqi Dinar', flag: '🇮🇶', continent: 'asia' },
+            { code: 'KWD', name: 'Kuwaiti Dinar', flag: '🇰🇼', continent: 'asia' },
+            { code: 'OMR', name: 'Omani Rial', flag: '🇴🇲', continent: 'asia' },
+            { code: 'QAR', name: 'Qatari Riyal', flag: '🇶🇦', continent: 'asia' },
+            { code: 'TRY', name: 'Turkish Lira', flag: '🇹🇷', continent: 'asia' },
+            { code: 'ILS', name: 'Israeli Shekel', flag: '🇮🇱', continent: 'asia' },
+            
+            // Europe
+            { code: 'CHF', name: 'Swiss Franc', flag: '🇨🇭', continent: 'europe' },
+            { code: 'SEK', name: 'Swedish Krona', flag: '🇸🇪', continent: 'europe' },
+            { code: 'NOK', name: 'Norwegian Krone', flag: '🇳🇴', continent: 'europe' },
+            { code: 'DKK', name: 'Danish Krone', flag: '🇩🇰', continent: 'europe' },
+            { code: 'RUB', name: 'Russian Ruble', flag: '🇷🇺', continent: 'europe' },
+            { code: 'PLN', name: 'Polish Zloty', flag: '🇵🇱', continent: 'europe' },
+            { code: 'CZK', name: 'Czech Koruna', flag: '🇨🇿', continent: 'europe' },
+            { code: 'HUF', name: 'Hungarian Forint', flag: '🇭🇺', continent: 'europe' },
+            { code: 'RON', name: 'Romanian Leu', flag: '🇷🇴', continent: 'europe' },
+            { code: 'BGN', name: 'Bulgarian Lev', flag: '🇧🇬', continent: 'europe' },
+            { code: 'HRK', name: 'Croatian Kuna', flag: '🇭🇷', continent: 'europe' },
+            { code: 'UAH', name: 'Ukrainian Hryvnia', flag: '🇺🇦', continent: 'europe' },
+            { code: 'BYN', name: 'Belarusian Ruble', flag: '🇧🇾', continent: 'europe' },
+            
+            // Africa
+            { code: 'ZAR', name: 'South African Rand', flag: '🇿🇦', continent: 'africa' },
+            { code: 'EGP', name: 'Egyptian Pound', flag: '🇪🇬', continent: 'africa' },
+            { code: 'NGN', name: 'Nigerian Naira', flag: '🇳🇬', continent: 'africa' },
+            { code: 'KES', name: 'Kenyan Shilling', flag: '🇰🇪', continent: 'africa' },
+            { code: 'GHS', name: 'Ghanaian Cedi', flag: '🇬🇭', continent: 'africa' },
+            { code: 'ETB', name: 'Ethiopian Birr', flag: '🇪🇹', continent: 'africa' },
+            { code: 'MAD', name: 'Moroccan Dirham', flag: '🇲🇦', continent: 'africa' },
+            { code: 'DZD', name: 'Algerian Dinar', flag: '🇩🇿', continent: 'africa' },
+            { code: 'TND', name: 'Tunisian Dinar', flag: '🇹🇳', continent: 'africa' },
+            { code: 'UGX', name: 'Ugandan Shilling', flag: '🇺🇬', continent: 'africa' },
+            { code: 'XOF', name: 'CFA Franc BCEAO', flag: '🌍', continent: 'africa' },
+            { code: 'XAF', name: 'CFA Franc BEAC', flag: '🌍', continent: 'africa' },
+            
+            // North America
+            { code: 'CAD', name: 'Canadian Dollar', flag: '🇨🇦', continent: 'north-america' },
+            { code: 'MXN', name: 'Mexican Peso', flag: '🇲🇽', continent: 'north-america' },
+            { code: 'BZD', name: 'Belize Dollar', flag: '🇧🇿', continent: 'north-america' },
+            { code: 'CRC', name: 'Costa Rican Colon', flag: '🇨🇷', continent: 'north-america' },
+            { code: 'GTQ', name: 'Guatemalan Quetzal', flag: '🇬🇹', continent: 'north-america' },
+            { code: 'HNL', name: 'Honduran Lempira', flag: '🇭🇳', continent: 'north-america' },
+            { code: 'NIO', name: 'Nicaraguan Cordoba', flag: '🇳🇮', continent: 'north-america' },
+            { code: 'PAB', name: 'Panamanian Balboa', flag: '🇵🇦', continent: 'north-america' },
+            
+            // South America
+            { code: 'BRL', name: 'Brazilian Real', flag: '🇧🇷', continent: 'south-america' },
+            { code: 'ARS', name: 'Argentine Peso', flag: '🇦🇷', continent: 'south-america' },
+            { code: 'CLP', name: 'Chilean Peso', flag: '🇨🇱', continent: 'south-america' },
+            { code: 'COP', name: 'Colombian Peso', flag: '🇨🇴', continent: 'south-america' },
+            { code: 'PEN', name: 'Peruvian Sol', flag: '🇵🇪', continent: 'south-america' },
+            { code: 'UYU', name: 'Uruguayan Peso', flag: '🇺🇾', continent: 'south-america' },
+            { code: 'BOB', name: 'Bolivian Boliviano', flag: '🇧🇴', continent: 'south-america' },
+            { code: 'PYG', name: 'Paraguayan Guarani', flag: '🇵🇾', continent: 'south-america' },
+            
+            // Oceania
+            { code: 'AUD', name: 'Australian Dollar', flag: '🇦🇺', continent: 'oceania' },
+            { code: 'NZD', name: 'New Zealand Dollar', flag: '🇳🇿', continent: 'oceania' },
+            { code: 'FJD', name: 'Fijian Dollar', flag: '🇫🇯', continent: 'oceania' },
+            { code: 'PGK', name: 'Papua New Guinean Kina', flag: '🇵🇬', continent: 'oceania' },
+            { code: 'WST', name: 'Samoan Tala', flag: '🇼🇸', continent: 'oceania' },
+            { code: 'TOP', name: 'Tongan Paʻanga', flag: '🇹🇴', continent: 'oceania' },
+            { code: 'VUV', name: 'Vanuatu Vatu', flag: '🇻🇺', continent: 'oceania' }
+        ];
+
+        // Generate realistic exchange rates
+        const exchangeRates = {};
+        worldCurrencies.forEach(currency => {
+            // Generate a realistic rate based on currency code
+            let rate;
+            switch(currency.code) {
+                case 'USD': rate = 278.45; break;
+                case 'EUR': rate = 301.23; break;
+                case 'GBP': rate = 352.67; break;
+                case 'AED': rate = 75.82; break;
+                case 'SAR': rate = 74.25; break;
+                case 'CNY': rate = 38.45; break;
+                case 'JPY': rate = 1.87; break;
+                case 'INR': rate = 3.34; break;
+                case 'KRW': rate = 0.21; break;
+                case 'SGD': rate = 205.67; break;
+                case 'MYR': rate = 59.34; break;
+                case 'THB': rate = 7.65; break;
+                case 'IDR': rate = 0.018; break;
+                case 'PHP': rate = 4.98; break;
+                case 'VND': rate = 0.011; break;
+                case 'BDT': rate = 2.54; break;
+                case 'LKR': rate = 0.87; break;
+                case 'NPR': rate = 2.11; break;
+                case 'AFN': rate = 3.18; break;
+                case 'IRR': rate = 0.0066; break;
+                case 'IQD': rate = 0.21; break;
+                case 'KWD': rate = 903.56; break;
+                case 'OMR': rate = 722.89; break;
+                case 'QAR': rate = 76.48; break;
+                case 'TRY': rate = 10.23; break;
+                case 'ILS': rate = 75.34; break;
+                case 'CHF': rate = 310.45; break;
+                case 'SEK': rate = 26.78; break;
+                case 'NOK': rate = 26.45; break;
+                case 'DKK': rate = 40.45; break;
+                case 'RUB': rate = 2.98; break;
+                case 'PLN': rate = 69.34; break;
+                case 'CZK': rate = 12.45; break;
+                case 'HUF': rate = 0.78; break;
+                case 'RON': rate = 60.45; break;
+                case 'BGN': rate = 154.23; break;
+                case 'HRK': rate = 39.87; break;
+                case 'UAH': rate = 7.45; break;
+                case 'BYN': rate = 87.65; break;
+                case 'ZAR': rate = 14.78; break;
+                case 'EGP': rate = 9.02; break;
+                case 'NGN': rate = 0.33; break;
+                case 'KES': rate = 1.89; break;
+                case 'GHS': rate = 18.45; break;
+                case 'ETB': rate = 4.87; break;
+                case 'MAD': rate = 27.45; break;
+                case 'DZD': rate = 2.06; break;
+                case 'TND': rate = 88.76; break;
+                case 'UGX': rate = 0.074; break;
+                case 'XOF': rate = 0.45; break;
+                case 'XAF': rate = 0.45; break;
+                case 'CAD': rate = 205.34; break;
+                case 'MXN': rate = 16.34; break;
+                case 'BZD': rate = 138.45; break;
+                case 'CRC': rate = 0.51; break;
+                case 'GTQ': rate = 35.67; break;
+                case 'HNL': rate = 11.23; break;
+                case 'NIO': rate = 7.56; break;
+                case 'PAB': rate = 278.45; break;
+                case 'BRL': rate = 53.45; break;
+                case 'ARS': rate = 1.12; break;
+                case 'CLP': rate = 0.31; break;
+                case 'COP': rate = 0.067; break;
+                case 'PEN': rate = 73.45; break;
+                case 'UYU': rate = 7.12; break;
+                case 'BOB': rate = 40.23; break;
+                case 'PYG': rate = 0.038; break;
+                case 'AUD': rate = 180.56; break;
+                case 'NZD': rate = 167.89; break;
+                case 'FJD': rate = 123.45; break;
+                case 'PGK': rate = 73.45; break;
+                case 'WST': rate = 102.34; break;
+                case 'TOP': rate = 118.76; break;
+                case 'VUV': rate = 2.34; break;
+                default: rate = 1; // Fallback rate
+            }
+            exchangeRates[currency.code] = rate;
+        });
+
+        // DOM elements
+        const amountInput = document.getElementById('amount');
+        const fromCurrencySelect = document.getElementById('from-currency');
+        const toCurrencySelect = document.getElementById('to-currency');
+        const swapButton = document.getElementById('swap-btn');
+        const conversionResult = document.getElementById('conversion-result');
+        const conversionRate = document.getElementById('conversion-rate');
+        const allCurrenciesContainer = document.getElementById('all-currencies');
+        const searchInput = document.getElementById('search-currency');
+        const continentButtons = document.querySelectorAll('.continent-btn');
+        
+        // Initialize currency dropdown
+        function initCurrencyDropdown() {
+            fromCurrencySelect.innerHTML = '';
+            
+            worldCurrencies.forEach(currency => {
+                const option = document.createElement('option');
+                option.value = currency.code;
+                option.textContent = `${currency.code} - ${currency.name}`;
+                fromCurrencySelect.appendChild(option);
+            });
+            
+            // Set default to USD
+            fromCurrencySelect.value = 'USD';
+        }
+        
+        // Initialize all currencies display
+        function initAllCurrencies(continent = 'all', searchTerm = '') {
+            allCurrenciesContainer.innerHTML = '';
+            
+            const filteredCurrencies = worldCurrencies.filter(currency => {
+                const matchesContinent = continent === 'all' || currency.continent === continent;
+                const matchesSearch = currency.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                     currency.code.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesContinent && matchesSearch;
+            });
+            
+            filteredCurrencies.forEach(currency => {
+                const rate = exchangeRates[currency.code];
+                const card = document.createElement('div');
+                card.className = 'currency-card';
+                card.innerHTML = `
+                    <div class="currency-flag">${currency.flag}</div>
+                    <div class="currency-name">${currency.name}</div>
+                    <div class="currency-code">${currency.code}</div>
+                    <div class="currency-rate">${rate.toFixed(2)} PKR</div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    fromCurrencySelect.value = currency.code;
+                    convertCurrency();
+                    
+                    // Add visual feedback
+                    card.style.backgroundColor = 'var(--light)';
+                    setTimeout(() => {
+                        card.style.backgroundColor = 'white';
+                    }, 300);
+                });
+                
+                allCurrenciesContainer.appendChild(card);
+            });
+            
+            // Show message if no results
+            if (filteredCurrencies.length === 0) {
+                const message = document.createElement('div');
+                message.style.gridColumn = '1 / -1';
+                message.style.textAlign = 'center';
+                message.style.padding = '40px';
+                message.style.color = '#666';
+                message.innerHTML = `
+                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                    <p>No currencies found matching your search.</p>
+                `;
+                allCurrenciesContainer.appendChild(message);
+            }
+        }
+        
+        // Convert currency function
+        function convertCurrency() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const fromCurrency = fromCurrencySelect.value;
+            const toCurrency = toCurrencySelect.value;
+            
+            if (fromCurrency === toCurrency) {
+                conversionResult.textContent = `${amount} ${fromCurrency} = ${amount} ${toCurrency}`;
+                conversionRate.textContent = `Exchange rate: 1 ${fromCurrency} = 1 ${toCurrency}`;
+                return;
+            }
+            
+            const rate = exchangeRates[fromCurrency];
+            const convertedAmount = (amount * rate).toFixed(2);
+            
+            // Format numbers with commas
+            const formattedAmount = formatNumber(amount);
+            const formattedConvertedAmount = formatNumber(convertedAmount);
+            
+            conversionResult.textContent = `${formattedAmount} ${fromCurrency} = ${formattedConvertedAmount} ${toCurrency}`;
+            conversionRate.textContent = `Exchange rate: 1 ${fromCurrency} = ${rate.toFixed(2)} ${toCurrency}`;
+        }
+        
+        // Format number with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        
+        // Swap currencies function
+        function swapCurrencies() {
+            alert("This converter is designed specifically for converting to PKR. To convert from PKR to other currencies, a different interface would be needed.");
+        }
+        
+        // Event listeners
+        amountInput.addEventListener('input', convertCurrency);
+        fromCurrencySelect.addEventListener('change', convertCurrency);
+        swapButton.addEventListener('click', swapCurrencies);
+        
+        // Continent filter event listeners
+        continentButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                continentButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Filter currencies by continent
+                const continent = button.getAttribute('data-continent');
+                initAllCurrencies(continent, searchInput.value);
+            });
+        });
+        
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const activeContinent = document.querySelector('.continent-btn.active').getAttribute('data-continent');
+            initAllCurrencies(activeContinent, searchInput.value);
+        });
+        
+        // Initialize the app
+        initCurrencyDropdown();
+        initAllCurrencies();
+        convertCurrency();
+        
+        // Add some animation to the converter card on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const converterCard = document.querySelector('.converter-card');
+            converterCard.style.opacity = '0';
+            converterCard.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                converterCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                converterCard.style.opacity = '1';
+                converterCard.style.transform = 'translateY(0)';
+            }, 300);
+        });
+    </script>
+</body>
+</html>
